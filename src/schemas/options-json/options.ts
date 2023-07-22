@@ -361,6 +361,20 @@ export const optionsSchema: jsonschema.Schema = {
         }
     },
     properties: {
+        // brysondev wuz here
+        collectionOfItemsCount: {
+            type: 'object',
+            properties: {
+                steamGroupId: {
+                    type: '#/definitions/string-array'
+                },
+                itemSKU: {
+                    type: 'string'
+                }
+            },
+            //required: ['steamGroupId', 'itemSKU'],
+            additionalProperties: false
+        },
         miscSettings: {
             type: 'object',
             properties: {
@@ -458,9 +472,12 @@ export const optionsSchema: jsonschema.Schema = {
                         customName: {
                             type: 'string',
                             maxLength: 60
+                        },
+                        showItemCount: {
+                            type: 'boolean'
                         }
                     },
-                    required: ['playOnlyTF2', 'customName'],
+                    required: ['playOnlyTF2', 'customName', 'showItemCount'],
                     additionalProperties: false
                 },
                 alwaysRemoveItemAttributes: {

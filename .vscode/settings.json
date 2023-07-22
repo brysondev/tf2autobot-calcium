@@ -20,5 +20,12 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
-    "eslint.validate": ["javascript", "typescript", "json"]
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "json"
+    ],
+    "cSpell.words": [
+        "defindex"
+    ]
 }

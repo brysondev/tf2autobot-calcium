@@ -78,6 +78,12 @@ interface BPTFTrust {
     negative?: number;
 }
 
+export interface statsOfWeapon {
+    numberOwned: number;
+    numberInExistence: number;
+    timestamp: number;
+}
+
 export interface Blocked {
     [steamid: string]: string;
 }

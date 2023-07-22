@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import path from 'path';
 
 export type OptionsKeys =
+    | 'collectionOfItemsCount'
     | 'miscSettings'
     | 'sendAlert'
     | 'pricelist'
@@ -913,18 +914,8 @@ export default class OptionsCommands {
                     this.bot.client.gamesPlayed(440);
                 }
 
-                if (typeof knownParams.miscSettings?.game?.customName === 'string') {
-                    this.bot.client.gamesPlayed([]);
-                    this.bot.client.gamesPlayed(
-                        (
-                            knownParams.miscSettings?.game?.playOnlyTF2 !== undefined
-                                ? knownParams.miscSettings.game.playOnlyTF2
-                                : opt.miscSettings.game.playOnlyTF2
-                        )
-                            ? 440
-                            : [knownParams.miscSettings.game.customName, 440]
-                    );
-                }
+                // brysondev wuz here.
+                if (knownParams.miscSettings?.game?.showItemCount === true) this.bot.CollectionOfItemsCount.send();
 
                 if (knownParams.statistics?.sendStats?.enable === true) {
                     this.bot.sendStats();
@@ -1098,6 +1089,11 @@ export default class OptionsCommands {
 
         if (knownParams.discordWebhook?.declinedTrade?.url !== undefined) {
             opt.discordWebhook.declinedTrade.url.length = 0;
+        }
+
+        // brysondev wuz here.
+        if (knownParams.collectionOfItemsCount.steamGroupId !== undefined) {
+            opt.collectionOfItemsCount.steamGroupId.length = 0;
         }
 
         if (knownParams.commands?.buy?.disableForSKU !== undefined) {

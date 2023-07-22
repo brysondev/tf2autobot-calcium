@@ -23,7 +23,7 @@ import processDeclined from './offer/processDeclined';
 import { sendReview } from './offer/review/export-review';
 import { keepMetalSupply, craftDuplicateWeapons, craftClassWeapons } from './utils/export-utils';
 
-import { Blocked, BPTFGetUserInfo } from './interfaces';
+import { Blocked, BPTFGetUserInfo, statsOfWeapon } from './interfaces';
 
 import Handler, { OnRun } from '../Handler';
 import Bot, { SteamTokens } from '../Bot';
@@ -52,6 +52,7 @@ import filterAxiosError from '@tf2autobot/filter-axios-error';
 import sendTf2SystemMessage from '../../lib/DiscordWebhook/sendTf2SystemMessage';
 import sendTf2DisplayNotification from '../../lib/DiscordWebhook/sendTf2DisplayNotification';
 import sendTf2ItemBroadcast from '../../lib/DiscordWebhook/sendTf2ItemBroadcast';
+import CollectionOfItemsCount from '../../lib/tools/CollectionOfItemsCount';
 
 const filterReasons = (reasons: string[]) => {
     const filtered = new Set(reasons);
@@ -66,6 +67,8 @@ export default class MyHandler extends Handler {
     readonly cartQueue: CartQueue;
 
     private groupsStore: string[];
+
+    CollectionOfItemsCount: CollectionOfItemsCount;
 
     private get opt(): Options {
         return this.bot.options;
@@ -203,6 +206,7 @@ export default class MyHandler extends Handler {
         this.commands = new Commands(bot, priceSource);
         this.cartQueue = new CartQueue(bot);
         this.autokeys = new Autokeys(bot);
+        this.CollectionOfItemsCount = new CollectionOfItemsCount(this.bot);
 
         this.paths = genPaths(this.opt.steamAccountName);
 
@@ -219,10 +223,17 @@ export default class MyHandler extends Handler {
             files.readFile(this.paths.files.pricelist, true),
             files.readFile(this.paths.files.loginAttempts, true),
             files.readFile(this.paths.files.pollData, true),
+            files.readFile(this.paths.files.oneTrickStats, true),
             files.readFile(this.paths.files.blockedList, true)
         ]).then(
-            ([pricelist, loginAttempts, pollData, blockedList]: [PricesDataObject, number[], PollData, Blocked]) => {
-                return { pricelist, loginAttempts, pollData, blockedList };
+            ([pricelist, loginAttempts, pollData, blockedList, statsOfWeapon]: [
+                PricesDataObject,
+                number[],
+                PollData,
+                Blocked,
+                statsOfWeapon
+            ]) => {
+                return { pricelist, loginAttempts, pollData, blockedList, statsOfWeapon };
             }
         );
     }
@@ -238,7 +249,11 @@ export default class MyHandler extends Handler {
                 .toFixed(0)} s`
         );
 
-        this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+        if (this.opt.miscSettings.game.showItemCount) {
+            void this.CollectionOfItemsCount.send();
+        } else {
+            this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+        }
         this.bot.client.setPersona(EPersonaState.Online);
 
         this.botSteamID = this.bot.client.steamID;
@@ -432,7 +447,11 @@ export default class MyHandler extends Handler {
     onLoggedOn(): void {
         if (this.bot.isReady) {
             this.bot.client.setPersona(EPersonaState.Online);
-            this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+            if (this.opt.miscSettings.game.showItemCount) {
+                void this.CollectionOfItemsCount.send();
+            } else {
+                this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+            }
         }
     }
 
@@ -2279,7 +2298,11 @@ export default class MyHandler extends Handler {
                 this.sentSummary = {};
             }, 2 * 60 * 1000);
         } else {
-            this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+            if (this.opt.miscSettings.game.showItemCount) {
+                void this.CollectionOfItemsCount.send();
+            } else {
+                this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+            }
         }
     }
 
@@ -2655,7 +2678,11 @@ export default class MyHandler extends Handler {
 
     onTF2QueueCompleted(): void {
         log.debug('Queue finished');
-        this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+        if (this.opt.miscSettings.game.showItemCount) {
+            void this.CollectionOfItemsCount.send();
+        } else {
+            this.bot.client.gamesPlayed(this.opt.miscSettings.game.playOnlyTF2 ? 440 : [this.customGameName, 440]);
+        }
     }
 
     onCreateListingsSuccessful(response: { created: number; archived: number; errors: any[] }): void {

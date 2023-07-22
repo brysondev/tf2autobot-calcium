@@ -7,6 +7,11 @@ import validator from '../lib/validator';
 import { Currency } from '../types/TeamFortress2';
 
 export const DEFAULTS: JsonOptions = {
+    // brysondev wuz here.
+    collectionOfItemsCount: {
+        steamGroupId: [],
+        itemSKU: ''
+    },
     miscSettings: {
         showOnlyMetal: {
             enable: true
@@ -45,6 +50,7 @@ export const DEFAULTS: JsonOptions = {
         },
         game: {
             playOnlyTF2: false,
+            showItemCount: false,
             customName: ''
         },
         alwaysRemoveItemAttributes: {
@@ -1188,7 +1194,16 @@ interface CheckUses {
 
 interface Game {
     playOnlyTF2?: boolean;
+    showItemCount?: boolean;
     customName?: string;
+}
+
+// brysondev wuz here.
+// ------------ CollectionOfItemsCount ------------
+
+interface collectionOfItemsCount {
+    steamGroupId?: string[];
+    itemSKU?: string;
 }
 
 // ------------ Counteroffer ------------
@@ -2133,6 +2148,7 @@ interface StrangeParts {
 // ------------ JsonOptions ------------
 
 export interface JsonOptions {
+    collectionOfItemsCount?: collectionOfItemsCount;
     miscSettings?: MiscSettings;
     sendAlert?: SendAlert;
     pricelist?: Pricelist;

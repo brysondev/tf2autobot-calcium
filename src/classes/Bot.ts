@@ -32,6 +32,7 @@ import Trades from './Trades';
 import Listings from './Listings';
 import TF2GC from './TF2GC';
 import Inventory from './Inventory';
+import CollectionOfItemsCount from '../lib/tools/CollectionOfItemsCount';
 import InventoryGetter from './InventoryGetter';
 import BotManager from './BotManager';
 import MyHandler from './MyHandler/MyHandler';
@@ -86,6 +87,9 @@ export default class Bot {
     readonly handler: MyHandler;
 
     readonly inventoryGetter: InventoryGetter;
+
+    // brysondev wuz here.
+    CollectionOfItemsCount: CollectionOfItemsCount;
 
     readonly boundInventoryGetter: (
         steamID: SteamID | string,
@@ -1039,9 +1043,9 @@ export default class Bot {
                                         token: this.options.bptfAccessToken,
                                         userID: this.userID,
                                         userAgent:
-                                            'TF2Autobot' +
+                                            '' +
                                             (this.options.useragentHeaderCustom !== ''
-                                                ? ` - ${this.options.useragentHeaderCustom}`
+                                                ? `${this.options.useragentHeaderCustom}`
                                                 : ' - Run your own bot for free'),
                                         schema: this.schema
                                     });
