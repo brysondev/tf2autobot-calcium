@@ -67,8 +67,8 @@ export function summarizeToChat(
         `\n\n${cTSummary}${
             isOfferSent !== undefined ? ` (${isOfferSent ? 'chat' : `offer${isCountered ? ' - countered' : ''}`})` : ''
         }\n` +
-        `\n${cTOffered} ${generatedSummary.offered}` +
-        `${cTAsked} ${generatedSummary.asked}` +
+        `${cTOffered} ${generatedSummary.offered}` +
+        `\n${cTAsked} ${generatedSummary.asked}` +
         '\n──────────────────────' +
         (['summary-accepted', 'review-admin'].includes(type) && !isOfferSent
             ? value.diff > 0
